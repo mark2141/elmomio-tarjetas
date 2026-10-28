@@ -1,0 +1,7 @@
+{"semana": "Ejemplo", "predicciones": [
+{"partido": "Equipo A vs Equipo B", "pick": "Gana A", "prob": 61, "acierto": true},
+{"partido": "Equipo C vs Equipo D", "pick": "Empate", "prob": 28, "acierto": false},
+{"partido": "Equipo E vs Equipo F", "pick": "Gana F", "prob": 54, "acierto": true},
+{"partido": "Equipo G vs Equipo H", "pick": "Gana G", "prob": 70, "acierto": true},
+{"partido": "Equipo I vs Equipo J", "pick": "Gana J", "prob": 45, "acierto": false}],
+"fuente": "mercados de predicción", "ejemplo": true}
