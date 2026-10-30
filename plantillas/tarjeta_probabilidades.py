@@ -41,23 +41,17 @@ def render(datos, salida):
     top, alto, gap = 240, 84, 28
     x0, x1 = 90, 1300
     lider = max(o["prob"] for o in ops)
+    nf = f(BARLOW_B, 46)
+    col_lab = max(d.textlength(o["nombre"].upper(), font=nf) for o in ops) + 36
+    xb = x0 + max(col_lab, 260)  # columna de etiquetas a la izquierda, barras a la derecha
     for i, o in enumerate(ops):
         y = top + i * (alto + gap)
-        d.rounded_rectangle([x0, y, x1, y + alto], 14, fill=(28, 28, 34))
-        ancho = int((x1 - x0) * max(o["prob"], 1) / 100)
-        col = LIMA if o["prob"] == lider else AZUL
-        d.rounded_rectangle([x0, y, x0 + max(ancho, 30), y + alto], 14, fill=col)
-        tcol = NEGRO if col == LIMA else BLANCO
-        nf = f(BARLOW_B, 52)
         nombre = o["nombre"].upper()
-        # Etiqueta siempre en la misma posición; sobre la barra lima va en negro (recortado al ancho de la barra)
-        pos = (x0 + 26, y + alto / 2)
-        d.text(pos, nombre, font=nf, fill=BLANCO, anchor="lm")
-        if col == LIMA:
-            m = Image.new("L", (W, H), 0)
-            ImageDraw.Draw(m).text(pos, nombre, font=nf, fill=255, anchor="lm")
-            caja = (x0, y, x0 + max(ancho, 30), y + alto)
-            img.paste(Image.new("RGB", (caja[2] - caja[0], caja[3] - caja[1]), NEGRO), caja[:2], m.crop(caja))
+        d.text((x0, y + alto / 2), nombre, font=nf, fill=LIMA if o["prob"] == lider else BLANCO, anchor="lm")
+        d.rounded_rectangle([xb, y, x1, y + alto], 14, fill=(28, 28, 34))
+        ancho = int((x1 - xb) * max(o["prob"], 1) / 100)
+        col = LIMA if o["prob"] == lider else AZUL
+        d.rounded_rectangle([xb, y, xb + max(ancho, 30), y + alto], 14, fill=col)
         d.text((x1 + 30, y + alto / 2), (f"{o['prob']:.0f}%" if float(o['prob']).is_integer() else f"{o['prob']:.1f}".replace('.', ',') + "%"), font=f(ANTON, 72), fill=LIMA if o["prob"] == lider else BLANCO, anchor="lm")
     # pie
     yb = top + len(ops) * (alto + gap) + 10
