@@ -50,11 +50,15 @@ def render(datos, salida):
         tcol = NEGRO if col == LIMA else BLANCO
         nf = f(BARLOW_B, 52)
         nombre = o["nombre"].upper()
-        if d.textlength(nombre, font=nf) + 50 < ancho:
-            d.text((x0 + 26, y + alto / 2), nombre, font=nf, fill=tcol, anchor="lm")
-        else:
-            d.text((x0 + max(ancho, 30) + 20, y + alto / 2), nombre, font=nf, fill=BLANCO, anchor="lm")
-        d.text((x1 + 30, y + alto / 2), f"{o['prob']:.0f}%", font=f(ANTON, 72), fill=LIMA if o["prob"] == lider else BLANCO, anchor="lm")
+        # Etiqueta siempre en la misma posición; sobre la barra lima va en negro (recortado al ancho de la barra)
+        pos = (x0 + 26, y + alto / 2)
+        d.text(pos, nombre, font=nf, fill=BLANCO, anchor="lm")
+        if col == LIMA:
+            m = Image.new("L", (W, H), 0)
+            ImageDraw.Draw(m).text(pos, nombre, font=nf, fill=255, anchor="lm")
+            caja = (x0, y, x0 + max(ancho, 30), y + alto)
+            img.paste(Image.new("RGB", (caja[2] - caja[0], caja[3] - caja[1]), NEGRO), caja[:2], m.crop(caja))
+        d.text((x1 + 30, y + alto / 2), (f"{o['prob']:.0f}%" if float(o['prob']).is_integer() else f"{o['prob']:.1f}".replace('.', ',') + "%"), font=f(ANTON, 72), fill=LIMA if o["prob"] == lider else BLANCO, anchor="lm")
     # pie
     yb = top + len(ops) * (alto + gap) + 10
     d.text((90, yb), datos.get("pregunta", ""), font=f(BARLOW_B, 50), fill=BLANCO)
