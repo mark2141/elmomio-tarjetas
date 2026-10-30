@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Tarjeta de probabilidades para X (1600x900).
 Uso: python3 tarjeta_probabilidades.py datos.json salida.png
-datos.json: {"etiqueta": "...", "titulo": "...", "opciones": [{"nombre": "...", "prob": 62}], "pregunta": "...", "fuente": "...", "ejemplo": false}
+datos.json: {"etiqueta": "...", "titulo": "...", "opciones": [{"nombre": "...", "prob": 62}], "pregunta": "...", "fuente": "...", "ejemplo": false, "destacar": "opcional: nombre a resaltar"}
 """
 import json, sys, random
 from PIL import Image, ImageDraw, ImageFont
@@ -41,6 +41,9 @@ def render(datos, salida):
     top, alto, gap = 240, 84, 28
     x0, x1 = 90, 1300
     lider = max(o["prob"] for o in ops)
+    # "destacar": nombre de la opción a resaltar en lima (p. ej. la que ganó en una reacción)
+    if datos.get("destacar"):
+        lider = next((o["prob"] for o in ops if o["nombre"].upper() == datos["destacar"].upper()), lider)
     nf = f(BARLOW_B, 46)
     col_lab = max(d.textlength(o["nombre"].upper(), font=nf) for o in ops) + 36
     xb = x0 + max(col_lab, 260)  # columna de etiquetas a la izquierda, barras a la derecha
