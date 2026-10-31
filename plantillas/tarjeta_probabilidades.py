@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Tarjeta de probabilidades para X (1600x900).
 Uso: python3 tarjeta_probabilidades.py datos.json salida.png
-datos.json: {"etiqueta": "...", "titulo": "...", "opciones": [{"nombre": "...", "prob": 62}], "pregunta": "...", "fuente": "...", "ejemplo": false, "destacar": "opcional: nombre a resaltar"}
+datos.json: {"etiqueta": "...", "titulo": "...", "opciones": [{"nombre": "...", "prob": 62}], "pregunta": "...", "fuente": "...", "ejemplo": false, "destacar": "opcional: nombre a resaltar", "escala": "opcional: valor de barra llena (100)", "sufijo": "opcional: texto tras la cifra (%)"}
 """
 import json, sys, random
 from PIL import Image, ImageDraw, ImageFont
@@ -52,10 +52,10 @@ def render(datos, salida):
         nombre = o["nombre"].upper()
         d.text((x0, y + alto / 2), nombre, font=nf, fill=LIMA if o["prob"] == lider else BLANCO, anchor="lm")
         d.rounded_rectangle([xb, y, x1, y + alto], 14, fill=(28, 28, 34))
-        ancho = int((x1 - xb) * max(o["prob"], 1) / 100)
+        ancho = int((x1 - xb) * max(o["prob"], 1) / datos.get("escala", 100))
         col = LIMA if o["prob"] == lider else AZUL
         d.rounded_rectangle([xb, y, xb + max(ancho, 30), y + alto], 14, fill=col)
-        d.text((x1 + 30, y + alto / 2), (f"{o['prob']:.0f}%" if float(o['prob']).is_integer() else f"{o['prob']:.1f}".replace('.', ',') + "%"), font=f(ANTON, 72), fill=LIMA if o["prob"] == lider else BLANCO, anchor="lm")
+        d.text((x1 + 30, y + alto / 2), ((f"{o['prob']:.0f}" if float(o['prob']).is_integer() else f"{o['prob']:.1f}".replace('.', ',')) + datos.get("sufijo", "%")), font=f(ANTON, 72), fill=LIMA if o["prob"] == lider else BLANCO, anchor="lm")
     # pie
     yb = top + len(ops) * (alto + gap) + 10
     d.text((90, yb), datos.get("pregunta", ""), font=f(BARLOW_B, 50), fill=BLANCO)
